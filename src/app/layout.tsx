@@ -57,12 +57,6 @@ export default function RootLayout({
                 코디 요청하기
               </Link>
               <AuthUserNavItem />
-              <Link
-                href="/mypage"
-                className="rounded-lg px-3 py-1.5 text-stone-300 transition hover:bg-stone-800 hover:text-white"
-              >
-                마이페이지
-              </Link>
             </nav>
           </div>
         </header>
