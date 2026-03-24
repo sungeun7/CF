@@ -110,6 +110,9 @@ export function readStore(): Store {
           raw.imagePath === null || typeof raw.imagePath === "string"
             ? (raw.imagePath as string | null)
             : null,
+        photoTags: Array.isArray(raw.photoTags)
+          ? raw.photoTags.map((p) => asText(p)).filter(Boolean).slice(0, 30)
+          : [],
         linkUrl:
           raw.linkUrl === null || typeof raw.linkUrl === "string"
             ? (raw.linkUrl as string | null)
@@ -141,6 +144,15 @@ export function addRequest(req: Omit<StyleRequest, "id" | "createdAt">): StyleRe
     createdAt,
   };
   store.requests.unshift(full);
+
+  // 요청 글 작성 보상: 로그인 사용자에게 +10P
+  const author = full.authorName.trim();
+  if (author && author !== "익명" && author !== "(탈퇴회원)") {
+    const row = store.userPoints.find((p) => typeof p?.userName === "string" && p.userName === author);
+    if (row) row.points += 10;
+    else store.userPoints.push({ userName: author, points: 10 });
+  }
+
   writeStore(store);
   return full;
 }
@@ -157,6 +169,15 @@ export function addRecommendation(
   const createdAt = new Date().toISOString();
   const full: Recommendation = { ...rec, id, createdAt };
   store.recommendations.push(full);
+
+  // 추천 작성 보상: 로그인 사용자에게 +5P
+  const author = full.authorName.trim();
+  if (author && author !== "익명" && author !== "(탈퇴회원)") {
+    const row = store.userPoints.find((p) => typeof p?.userName === "string" && p.userName === author);
+    if (row) row.points += 5;
+    else store.userPoints.push({ userName: author, points: 5 });
+  }
+
   writeStore(store);
   return full;
 }

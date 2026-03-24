@@ -1,7 +1,10 @@
 {
+  "/api/auth/session/route": "app/api/auth/session/route.js",
   "/api/requests/route": "app/api/requests/route.js",
-  "/api/me/route": "app/api/me/route.js",
-  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
+  "/api/leaderboard/route": "app/api/leaderboard/route.js",
   "/page": "app/page.js",
-  "/mypage/page": "app/mypage/page.js"
+  "/mypage/page": "app/mypage/page.js",
+  "/r/[id]/page": "app/r/[id]/page.js",
+  "/login/page": "app/login/page.js",
+  "/new/page": "app/new/page.js"
 }

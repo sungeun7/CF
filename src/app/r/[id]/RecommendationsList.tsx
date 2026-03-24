@@ -144,6 +144,18 @@ export default function RecommendationsList({
                   관련 링크 열기
                 </a>
               ) : null}
+              {rec.photoTags.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {rec.photoTags.map((tag) => (
+                    <span
+                      key={`${rec.id}-${tag}`}
+                      className="rounded-full border border-stone-700 bg-stone-900/60 px-3 py-1 text-xs text-stone-300"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
               <div className="mt-3 flex items-center justify-between gap-2">
                 {acceptedRecommendationId === rec.id ? (
                   <span className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300">
@@ -155,6 +167,8 @@ export default function RecommendationsList({
                   <span className="text-xs text-stone-600">…</span>
                 ) : currentUser !== requestAuthorName ? (
                   <span className="text-xs text-stone-600">작성자만 채택할 수 있습니다.</span>
+                ) : rec.authorName === currentUser ? (
+                  <span className="text-xs text-stone-600">본인 추천은 채택할 수 없습니다.</span>
                 ) : (
                   <AdoptButton requestId={requestId} recommendationId={rec.id} />
                 )}

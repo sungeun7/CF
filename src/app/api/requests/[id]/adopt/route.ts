@@ -1,4 +1,4 @@
-import { adoptRecommendation, getRequest } from "@/lib/store";
+import { adoptRecommendation, getRecommendationsForRequest, getRequest } from "@/lib/store";
 import { jsonUtf8 } from "@/lib/json-response";
 import { cookies } from "next/headers";
 import { AUTH_COOKIE } from "@/lib/auth";
@@ -30,6 +30,14 @@ export async function POST(req: Request, context: Params) {
     const recommendationId = String(body.recommendationId ?? "").trim();
     if (!recommendationId) {
       return jsonUtf8({ error: "추천 ID가 필요합니다." }, { status: 400 });
+    }
+
+    const target = getRecommendationsForRequest(id).find((r) => r.id === recommendationId);
+    if (!target) {
+      return jsonUtf8({ error: "추천을 찾을 수 없습니다." }, { status: 404 });
+    }
+    if (target.authorName === currentUser) {
+      return jsonUtf8({ error: "작성자는 본인 추천을 채택할 수 없습니다." }, { status: 403 });
     }
 
     const result = adoptRecommendation(id, recommendationId);

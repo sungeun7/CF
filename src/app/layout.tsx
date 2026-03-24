@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
+import PointsSidebar from "./components/PointsSidebar";
+import AuthUserNavItem from "./components/AuthUserNavItem";
 
 export const metadata: Metadata = {
   applicationName: "choose the fashion",
@@ -37,7 +39,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className="font-sans min-h-screen">
         <header className="sticky top-0 z-10 border-b border-stone-800/80 bg-stone-950/80 backdrop-blur-md">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
             <Link href="/" className="text-lg font-semibold tracking-tight text-stone-50">
               choose the <span className="text-orange-400">fashion</span>
             </Link>
@@ -54,12 +56,7 @@ export default function RootLayout({
               >
                 코디 요청하기
               </Link>
-              <Link
-                href="/login"
-                className="rounded-lg px-3 py-1.5 text-stone-300 transition hover:bg-stone-800 hover:text-white"
-              >
-                로그인
-              </Link>
+              <AuthUserNavItem />
               <Link
                 href="/mypage"
                 className="rounded-lg px-3 py-1.5 text-stone-300 transition hover:bg-stone-800 hover:text-white"
@@ -69,8 +66,13 @@ export default function RootLayout({
             </nav>
           </div>
         </header>
-        <main className="mx-auto max-w-3xl px-4 py-8">{children}</main>
-        <footer className="mx-auto max-w-3xl px-4 pb-10 pt-4 text-center text-xs text-stone-500">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <main className="min-w-0">{children}</main>
+          <aside className="hidden lg:block">
+            <PointsSidebar />
+          </aside>
+        </div>
+        <footer className="mx-auto max-w-6xl px-4 pb-10 pt-2 text-center text-xs text-stone-500">
           로컬 서버에서 동작합니다. 다른 사람과 공유하려면 같은 서버에 접속하거나 배포하세요.
         </footer>
       </body>

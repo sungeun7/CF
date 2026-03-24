@@ -4,6 +4,7 @@ export type Recommendation = {
   authorName: string;
   content: string;
   imagePath: string | null;
+  photoTags: string[];
   linkUrl: string | null;
   createdAt: string;
 };

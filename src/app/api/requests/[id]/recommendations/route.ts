@@ -32,6 +32,12 @@ export async function POST(req: Request, context: Params) {
       body.linkUrl === null || body.linkUrl === undefined
         ? null
         : String(body.linkUrl).trim() || null;
+    const photoTagsRaw = Array.isArray(body.photoTags) ? body.photoTags : [];
+    const photoTags = photoTagsRaw
+      .map((v: unknown) => String(v ?? "").trim())
+      .filter(Boolean)
+      .map((tag: string) => (tag.startsWith("#") ? tag : `#${tag}`))
+      .slice(0, 20);
 
     if (!content || content.length > 2000) {
       return jsonUtf8(
@@ -49,6 +55,7 @@ export async function POST(req: Request, context: Params) {
         authorName: sessionUser,
         content,
         imagePath,
+        photoTags,
         linkUrl,
       });
       return jsonUtf8(created, { status: 201 });

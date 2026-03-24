@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = { requestId: string };
 
@@ -9,9 +9,32 @@ export default function RecommendForm({ requestId }: Props) {
   const router = useRouter();
   const [content, setContent] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
+  const [photoTagsText, setPhotoTagsText] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!file) {
+      setPreviewUrl(null);
+      return;
+    }
+    let cancelled = false;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (!cancelled && typeof reader.result === "string") {
+        setPreviewUrl(reader.result);
+      }
+    };
+    reader.onerror = () => {
+      if (!cancelled) setPreviewUrl(null);
+    };
+    reader.readAsDataURL(file);
+    return () => {
+      cancelled = true;
+    };
+  }, [file]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,6 +56,10 @@ export default function RecommendForm({ requestId }: Props) {
         body: JSON.stringify({
           content,
           imagePath,
+          photoTags: photoTagsText
+            .split(/[,\s]+/)
+            .map((v) => v.trim())
+            .filter(Boolean),
           linkUrl: linkUrl.trim() || null,
         }),
       });
@@ -40,6 +67,7 @@ export default function RecommendForm({ requestId }: Props) {
       if (!res.ok) throw new Error(data.error ?? "등록 실패");
       setContent("");
       setLinkUrl("");
+      setPhotoTagsText("");
       setFile(null);
       router.refresh();
     } catch (err) {
@@ -86,6 +114,19 @@ export default function RecommendForm({ requestId }: Props) {
         />
       </div>
       <div>
+        <label htmlFor="recPhotoTags" className="mb-1.5 block text-sm font-medium text-stone-300">
+          사진 태그 (선택)
+        </label>
+        <input
+          id="recPhotoTags"
+          type="text"
+          value={photoTagsText}
+          onChange={(e) => setPhotoTagsText(e.target.value)}
+          placeholder="#셔츠 #봄코디 (공백/쉼표로 구분)"
+          className="w-full rounded-xl border border-stone-700 bg-stone-900 px-4 py-2.5 text-stone-100 placeholder:text-stone-600 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+        />
+      </div>
+      <div>
         <label htmlFor="recImage" className="mb-1.5 block text-sm font-medium text-stone-300">
           추천 이미지 (선택)
         </label>
@@ -97,6 +138,17 @@ export default function RecommendForm({ requestId }: Props) {
           className="block w-full text-sm text-stone-400 file:mr-4 file:rounded-lg file:border-0 file:bg-stone-800 file:px-4 file:py-2 file:text-stone-200 hover:file:bg-stone-700"
         />
       </div>
+      {previewUrl ? (
+        <div className="rounded-xl border border-stone-800 bg-stone-900/40 p-3">
+          <p className="mb-2 text-xs text-stone-500">이미지 미리보기</p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={previewUrl}
+            alt="추천 이미지 미리보기"
+            className="max-h-72 w-full rounded-lg border border-stone-800 bg-stone-950 object-contain"
+          />
+        </div>
+      ) : null}
       <button
         type="submit"
         disabled={loading}
