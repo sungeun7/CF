@@ -3,6 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 import PointsSidebar from "./components/PointsSidebar";
 import AuthUserNavItem from "./components/AuthUserNavItem";
+import PwaRegister from "./components/PwaRegister";
 
 export const metadata: Metadata = {
   applicationName: "choose the fashion",
@@ -38,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="font-sans min-h-screen">
+        <PwaRegister />
         <header className="sticky top-0 z-10 border-b border-stone-800/80 bg-stone-950/80 backdrop-blur-md">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
             <Link href="/" className="text-lg font-semibold tracking-tight text-stone-50">
